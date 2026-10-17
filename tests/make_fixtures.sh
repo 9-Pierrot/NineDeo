@@ -17,9 +17,11 @@ $FF $SRC -filter_complex "[0:v]split=2[a][b];[b]scale=640:360[b2]" \
 # DASH
 $FF $SRC -c:v libx264 -preset veryfast -g 50 -keyint_min 50 -sc_threshold 0 -b:v 1000k -c:a aac -f dash -seg_duration 2 "$OUT/dash/manifest.mpd"
 # HLS chiffré AES-128 (chiffrement de transport standard, clé servie en clair : pas un DRM)
-openssl rand 16 > "$OUT/hls_aes/enc.key"
-printf 'enc.key\n%s\n' "$OUT/hls_aes/enc.key" > "$OUT/hls_aes/keyinfo"
-$FF $SRC -c:v libx264 -preset veryfast -g 50 -keyint_min 50 -sc_threshold 0 -c:a aac -f hls -hls_time 2 -hls_playlist_type vod \
-  -hls_key_info_file "$OUT/hls_aes/keyinfo" "$OUT/hls_aes/index.m3u8"
+# Chemins relatifs dans keyinfo : sous Git Bash (Windows), un chemin /d/... écrit
+# DANS un fichier n'est pas converti et ffmpeg.exe ne pourrait pas l'ouvrir.
+head -c 16 /dev/urandom > "$OUT/hls_aes/enc.key"
+printf 'enc.key\nenc.key\n' > "$OUT/hls_aes/keyinfo"
+( cd "$OUT/hls_aes" && $FF $SRC -c:v libx264 -preset veryfast -g 50 -keyint_min 50 -sc_threshold 0 -c:a aac -f hls -hls_time 2 \
+  -hls_playlist_type vod -hls_key_info_file keyinfo index.m3u8 )
 rm "$OUT/hls_aes/keyinfo"
 echo "OK -> $OUT"
