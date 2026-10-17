@@ -36,13 +36,13 @@ jobs:
           powershell -NoProfile -ExecutionPolicy Bypass -File installer\windows\build_exe.ps1 -Python python
           if (-not (Test-Path installer\windows\dist\ninedeo_host\ninedeo_host.exe)) { throw 'build échoué' }
       - name: Archives
-        shell: powershell
+        shell: pwsh   # PowerShell 7 : chemins « / » dans le zip (lisible aussi sous macOS/Linux)
         run: |
           $v = $env:TAG.TrimStart('v')
           python tools\build_extension.py
           $stage = Join-Path $env:RUNNER_TEMP "NineDeo-$v"
           New-Item -ItemType Directory -Force $stage | Out-Null
-          foreach ($p in 'extension', 'installer', 'README.md', 'logo.png') { Copy-Item -Recurse $p $stage }
+          foreach ($p in 'extension', 'installer', 'README.md', 'LICENSE', 'logo.png') { Copy-Item -Recurse $p $stage }
           Remove-Item -Recurse -Force (Join-Path $stage 'installer\windows\build') -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force (Join-Path $stage 'docs') | Out-Null
           Copy-Item docs\*.pdf (Join-Path $stage 'docs')
