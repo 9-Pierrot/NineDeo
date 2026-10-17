@@ -1,13 +1,17 @@
 name: Release
 
+# Publication d'une version : Actions → Release → « Run workflow » (version = 1.0.0),
+# ou push d'un tag v*. Le workflow crée le tag et la release, compile l'exécutable
+# Windows de l'hôte et joint les archives.
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Tag existant à publier (ex. v1.0.0)"
+      version:
+        description: "Version à publier (ex. 1.0.0)"
         required: true
+        default: "1.0.0"
 
 permissions:
   contents: write
@@ -18,11 +22,9 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 40
     env:
-      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      TAG: ${{ github.event.inputs.version && format('v{0}', github.event.inputs.version) || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ env.TAG }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -51,5 +53,5 @@ jobs:
         run: |
           v="${TAG#v}"
           notes="Archive **NineDeo-$v-windows.zip** : décompresser, lancer \`installer\\windows\\install.bat\` (aucun Python requis, moteur pré-compilé inclus), puis charger le dossier \`extension\` dans \`chrome://extensions\` (mode développeur). Voir la notice PDF incluse."
-          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "NineDeo $v" --notes "$notes"
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --target "$GITHUB_SHA" --title "NineDeo $v" --notes "$notes"
           gh release upload "$TAG" --clobber dist/*.zip "docs/NineDeo - Notice d'utilisation.pdf" "docs/NineDeo - Documentation technique.pdf"
