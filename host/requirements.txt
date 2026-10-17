@@ -1,0 +1,3 @@
+# Moteur d'extraction/téléchargement (+ dépendances recommandées et
+# curl_cffi pour l'imitation TLS d'un navigateur sur les sites protégés).
+yt-dlp[default,curl-cffi]>=2025.1.1

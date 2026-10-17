@@ -1,0 +1,18 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#E8ECFF", "primaryBorderColor": "#0029FF", "lineColor": "#4B5575", "fontFamily": "Segoe UI, Arial"}}}%%
+flowchart TD
+  R["Réponse HTTP observée<br/>webRequest.onHeadersReceived"] --> C{"Content-Type /<br/>extension ?"}
+  C -- "m3u8 / mpegurl" --> HLS["HLS"]
+  C -- "mpd / dash+xml" --> DASH["DASH"]
+  C -- "video/* audio/*<br/>mp4 webm mkv…" --> SEG{"Segment ?<br/>.ts .m4s, seg-12…"}
+  C -- autre --> X["ignoré"]
+  SEG -- oui --> X
+  SEG -- non --> SZ{"Taille ≥ seuil ?<br/>(300 Kio)"}
+  SZ -- non --> X
+  SZ -- oui --> FILE["Fichier direct"]
+  HLS --> AN["Analyse du manifeste<br/>(fetch)"]
+  DASH --> AN
+  AN --> M{"Maître ?"}
+  M -- oui --> V["Variantes : 1080p, 720p…<br/>les playlists filles sont regroupées"]
+  M -- non --> D["Durée, direct ?"]
+  AN --> DRM{"SAMPLE-AES, Widevine,<br/>PlayReady, ContentProtection ?"}
+  DRM -- oui --> BLK["marqué DRM :<br/>téléchargement refusé"]

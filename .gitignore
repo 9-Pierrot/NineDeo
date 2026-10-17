@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+# Médias de test générés (bash tests/make_fixtures.sh)
+tests/media/
+# Construction
+dist/
+installer/windows/build/
+installer/windows/dist/
+# Clé privée de signature de l'extension : ne pas publier
+tools/keys/*.pem

@@ -1,0 +1,4 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Manifeste DASH - NineDeo Test</title></head>
+<body><h1>DASH</h1><p>Le script ci-dessous charge le manifeste comme le ferait un lecteur (dash.js, Shaka…).</p>
+<script>fetch('/media/dash/manifest.mpd').then(r => r.text()).then(t => document.body.append(t.length + ' octets de MPD chargés'));</script>
+</body></html>

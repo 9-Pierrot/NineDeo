@@ -1,0 +1,13 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Contenu protégé EME - NineDeo Test</title></head>
+<body style="font:15px system-ui;margin:40px"><h1>Page utilisant EME</h1><video id="v" muted style="width:480px;background:#000"></video>
+<script>
+navigator.requestMediaKeySystemAccess('org.w3.clearkey', [{initDataTypes:['cenc'],videoCapabilities:[{contentType:'video/mp4; codecs="avc1.42E01E"'}]}])
+  .then(a => a.createMediaKeys()).then(k => document.getElementById('v').setMediaKeys(k))
+  .then(() => document.body.append(' MediaKeys attachées.'))
+  .catch(e => {
+    document.body.append(' EME indisponible (' + e.name + ') : simulation d\'un lecteur qui attache ses clés.');
+    // Navigateur de test sans ClearKey (Chromium headless) : on reproduit l'appel
+    // setMediaKeys() d'un lecteur DRM pour vérifier la détection.
+    document.getElementById('v').setMediaKeys({}).catch(() => {});
+  });
+</script></body></html>

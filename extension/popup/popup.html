@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>NineDeo</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img class="logo" src="../icons/icon-64.png" alt="">
+    <div class="brand">
+      <span class="name">NineDeo</span>
+      <span class="tagline">Téléchargeur vidéo</span>
+    </div>
+    <button class="host-pill" id="hostPill" type="button" title="État du moteur de téléchargement">
+      <i class="dot"></i><span class="label">Moteur…</span>
+    </button>
+    <button class="icon-btn" id="openOptions" type="button" title="Paramètres" aria-label="Paramètres">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7Zm7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.61-.22l-2.49 1a7.3 7.3 0 0 0-1.69-.98l-.38-2.65A.49.49 0 0 0 14 2h-4a.49.49 0 0 0-.49.42l-.38 2.65c-.61.25-1.17.58-1.69.98l-2.49-1a.5.5 0 0 0-.61.22l-2 3.46a.49.49 0 0 0 .12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66a.49.49 0 0 0-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65a7.3 7.3 0 0 0 1.69-.98l2.49 1.01c.22.08.49 0 .61-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.66Z"/></svg>
+    </button>
+  </header>
+
+  <div class="banner danger" id="hostBanner" hidden>
+    <strong>Moteur NineDeo introuvable.</strong>
+    <span>Les flux directs (MP4…) restent téléchargeables, mais HLS/DASH et l'analyse des pages nécessitent l'installation du moteur local.</span>
+    <div class="banner-actions">
+      <button type="button" class="btn small" id="retryHost">Réessayer</button>
+      <button type="button" class="btn small ghost" id="howInstall">Comment l'installer ?</button>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="page" aria-selected="true" type="button">Cette page</button>
+    <button role="tab" data-tab="jobs" aria-selected="false" type="button">Téléchargements <span class="count" id="jobCount"></span></button>
+  </nav>
+
+  <main>
+    <section id="tab-page" role="tabpanel">
+      <div class="banner warn" id="drmBanner" hidden></div>
+
+      <article class="card page-card">
+        <div class="page-head">
+          <img class="favicon" id="favicon" alt="">
+          <div class="page-meta">
+            <div class="page-title" id="pageTitle">—</div>
+            <div class="page-url" id="pageUrl"></div>
+          </div>
+        </div>
+
+        <div class="probe" id="probeResult" hidden>
+          <img class="thumb" id="probeThumb" alt="">
+          <div class="probe-info">
+            <div class="probe-title" id="probeTitle"></div>
+            <div class="probe-sub" id="probeSub"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <select id="pagePreset" aria-label="Qualité"></select>
+          <button class="btn primary" id="pageDownload" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.59l3.3-3.3a1 1 0 1 1 1.4 1.42l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.42l3.3 3.3V4a1 1 0 0 1 1-1Zm-8 15a1 1 0 0 1 1 1v1h14v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"/></svg>
+            Télécharger
+          </button>
+        </div>
+        <div class="probe-line">
+          <button class="link" id="analyze" type="button">Analyser la page pour voir les qualités exactes</button>
+          <span class="hint" id="probeStatus" role="status"></span>
+        </div>
+      </article>
+
+      <h2 class="section-title">Flux détectés <span class="count" id="mediaCount"></span></h2>
+      <ul class="list" id="mediaList"></ul>
+      <div class="empty" id="mediaEmpty">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11-6.86a1 1 0 0 0 0-1.7l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg>
+        <p><strong>Aucun flux détecté pour l'instant.</strong><br>Lancez la lecture de la vidéo : NineDeo repère automatiquement les fichiers et flux (MP4, HLS, DASH) chargés par le lecteur.</p>
+      </div>
+    </section>
+
+    <section id="tab-jobs" role="tabpanel" hidden>
+      <div class="toolbar">
+        <button class="btn small ghost" id="openFolder" type="button">Ouvrir le dossier</button>
+        <button class="btn small ghost" id="clearDone" type="button">Effacer les terminés</button>
+      </div>
+      <ul class="list" id="jobList"></ul>
+      <div class="empty" id="jobsEmpty">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.59l3.3-3.3a1 1 0 1 1 1.4 1.42l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.42l3.3 3.3V4a1 1 0 0 1 1-1Z"/></svg>
+        <p><strong>Aucun téléchargement.</strong><br>Vos téléchargements et leur progression apparaîtront ici.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="alert" hidden></div>
+
+  <script src="../shared/util.js"></script>
+  <script src="../shared/dom.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#E8ECFF", "primaryBorderColor": "#0029FF", "actorBkg": "#E8ECFF", "actorBorder": "#0029FF", "fontFamily": "Segoe UI, Arial"}}}%%
+sequenceDiagram
+  autonumber
+  participant U as Utilisateur
+  participant P as Popup
+  participant S as Service worker
+  participant H as Hôte natif
+  participant Y as yt-dlp / ffmpeg
+  U->>P: clic « Télécharger » (720p)
+  P->>S: download {tabId, source, preset}
+  S->>S: construit la tâche (URL, replis,<br/>Referer, User-Agent, cookies)
+  S->>H: connectNative + hello {config}
+  H-->>S: {version, yt-dlp, ffmpeg}
+  S->>H: download {job}
+  H-->>S: réponse {status: queued}
+  H->>Y: extract_info(url, download=True)
+  loop progression (≤ 4 / s)
+    Y-->>H: progress_hook
+    H-->>S: event job {progress, speed, eta}
+    S-->>P: job (mise à jour de la barre)
+  end
+  Y-->>H: post-traitement (fusion, métadonnées)
+  H-->>S: event job {status: finished, filepath}
+  S->>U: notification « Téléchargement terminé »

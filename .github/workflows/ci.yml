@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux:
+    name: Tests hôte + e2e (Linux, Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Dépendances
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          python -m pip install -q -r host/requirements.txt pytest playwright
+          python -m playwright install --with-deps chromium
+          mkdir -p "$RUNNER_TEMP/vendor" && npm install --prefix "$RUNNER_TEMP/vendor" --silent hls.js@1.5.20
+      - name: Médias de test
+        run: DUR=20 bash tests/make_fixtures.sh
+      - name: Tests de l'hôte (pytest)
+        run: python -m pytest tests -q
+      - name: Test de bout en bout (extension + hôte réel)
+        run: python tests/e2e_extension.py --vendor "$RUNNER_TEMP/vendor/node_modules"
+      - name: Captures d'écran
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captures-e2e
+          path: docs/images/popup-*.png
+          if-no-files-found: ignore
+
+  windows:
+    name: Installeur Windows réel + tests
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install.ps1 (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File installer\windows\install.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Médias de test (Git Bash + ffmpeg installé par NineDeo)
+        shell: bash
+        run: |
+          export PATH="$(cygpath "$LOCALAPPDATA")/NineDeo/host/bin:$PATH"
+          ffmpeg -version | head -1
+          DUR=12 bash tests/make_fixtures.sh
+      - name: Hôte lancé comme par Chrome (cmd.exe + Native Messaging)
+        shell: powershell
+        run: |
+          & "$env:LOCALAPPDATA\NineDeo\venv\Scripts\python.exe" tests\check_windows_install.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Tests de l'hôte dans l'environnement installé (pytest)
+        shell: powershell
+        run: |
+          $py = "$env:LOCALAPPDATA\NineDeo\venv\Scripts\python.exe"
+          $env:NINEDEO_FFMPEG = "$env:LOCALAPPDATA\NineDeo\host\bin\ffmpeg.exe"
+          $env:PATH = "$env:LOCALAPPDATA\NineDeo\host\bin;$env:PATH"
+          & $py -m pip install -q pytest
+          & $py -m pytest tests -q
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: uninstall.ps1
+        shell: powershell
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File installer\windows\uninstall.ps1 -KeepFiles
+          if (Test-Path 'HKCU:\Software\Google\Chrome\NativeMessagingHosts\com.ninedeo.host') { throw 'clé de registre restante' }
+          Write-Host 'Désinstallation OK'

@@ -1,0 +1,12 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Conférence en streaming HLS - NineDeo Test</title>
+<style>body{font:15px system-ui;margin:40px}video{width:720px;max-width:100%;background:#000}</style>
+<script src="/vendor/hls.js/dist/hls.min.js"></script></head>
+<body><h1>Lecteur HLS (Media Source Extensions)</h1>
+<video id="v" controls muted></video>
+<script>
+  const v = document.getElementById('v');
+  const src = '/media/hls/master.m3u8';
+  if (window.Hls && Hls.isSupported()) { const hls = new Hls(); hls.loadSource(src); hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(()=>{})); }
+  else { v.src = src; }
+</script></body></html>

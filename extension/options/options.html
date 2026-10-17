@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NineDeo — Paramètres</title>
+  <link rel="icon" href="../icons/icon-32.png">
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <img src="../icons/icon-128.png" alt="" class="hero-logo">
+      <div>
+        <h1>NineDeo</h1>
+        <p>Paramètres du téléchargeur vidéo</p>
+      </div>
+      <span class="saved" id="saved" aria-live="polite"></span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="side">
+      <a href="#moteur">Moteur</a>
+      <a href="#telechargements">Téléchargements</a>
+      <a href="#qualite">Qualité &amp; formats</a>
+      <a href="#performances">Performances</a>
+      <a href="#avance">Avancé</a>
+      <a href="#interface">Interface</a>
+      <a href="#installation">Installation</a>
+      <a href="#apropos">À propos</a>
+    </nav>
+
+    <main>
+      <!-- ============================================================ -->
+      <section id="moteur" class="panel">
+        <h2>Moteur de téléchargement</h2>
+        <p class="desc">Programme local (hôte natif) qui exécute yt-dlp et ffmpeg sur votre ordinateur. L'extension lui transmet les vidéos à télécharger.</p>
+        <div class="status-card" id="hostCard" data-status="disconnected">
+          <div class="status-head">
+            <i class="dot"></i>
+            <strong id="hostStatus">Vérification…</strong>
+          </div>
+          <dl class="kv" id="hostInfo"></dl>
+          <div class="actions">
+            <button class="btn" id="testHost" type="button">Tester la connexion</button>
+            <button class="btn" id="updateYtdlp" type="button">Mettre à jour yt-dlp</button>
+          </div>
+          <p class="hint" id="hostMsg" role="status"></p>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section id="telechargements" class="panel">
+        <h2>Téléchargements</h2>
+        <label class="field">
+          <span class="label">Dossier de destination</span>
+          <div class="inline">
+            <input type="text" data-key="download_dir" id="downloadDir" placeholder="Par défaut : Téléchargements\NineDeo" spellcheck="false">
+            <button class="btn" id="browse" type="button">Parcourir…</button>
+            <button class="btn ghost" id="openDir" type="button">Ouvrir</button>
+          </div>
+        </label>
+        <label class="field">
+          <span class="label">Modèle de nom de fichier</span>
+          <input type="text" data-key="filename_template" spellcheck="false">
+          <span class="help">Syntaxe yt-dlp. Exemples : <code>%(title)s.%(ext)s</code>, <code>%(uploader)s - %(title)s [%(id)s].%(ext)s</code>, <code>%(upload_date>%Y-%m-%d)s %(title)s.%(ext)s</code>. Les flux détectés directement utilisent le titre de la page.</span>
+        </label>
+        <label class="check"><input type="checkbox" data-key="allow_playlists"> <span>Télécharger les playlists entières quand l'adresse en désigne une</span></label>
+      </section>
+
+      <!-- ============================================================ -->
+      <section id="qualite" class="panel">
+        <h2>Qualité &amp; formats</h2>
+        <div class="grid2">
+          <label class="field">
+            <span class="label">Qualité par défaut</span>
+            <select data-key="default_preset" id="defaultPreset"></select>
+            <span class="help">Utilisée par le bouton sur les vidéos, le menu contextuel et le raccourci Alt+Maj+D.</span>
+          </label>
+          <label class="field">
+            <span class="label">Conteneur vidéo</span>
+            <select data-key="container">
+              <option value="mp4">MP4 (compatible partout)</option>
+              <option value="mkv">MKV (tous codecs, sous-titres)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="label">Format audio (préréglage « Audio »)</span>
+            <select data-key="audio_format">
+              <option value="mp3">MP3</option>
+              <option value="m4a">M4A (AAC)</option>
+              <option value="opus">Opus</option>
+              <option value="flac">FLAC</option>
+              <option value="wav">WAV</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="label">Débit MP3</span>
+            <select data-key="audio_quality">
+              <option value="128">128 kb/s</option>
+              <option value="192">192 kb/s</option>
+              <option value="256">256 kb/s</option>
+              <option value="320">320 kb/s</option>
+            </select>
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" data-key="prefer_compatible"> <span>À qualité égale, préférer H.264 + AAC (lecture garantie sur Windows, TV, smartphones)</span></label>
+        <label class="check"><input type="checkbox" data-key="embed_metadata"> <span>Écrire les métadonnées (titre, auteur, chapitres) dans le fichier</span></label>
+        <label class="check"><input type="checkbox" data-key="embed_thumbnail"> <span>Intégrer la miniature comme pochette</span></label>
+        <label class="check"><input type="checkbox" data-key="embed_subtitles"> <span>Intégrer les sous-titres disponibles</span></label>
+        <label class="field narrow">
+          <span class="label">Langues des sous-titres</span>
+          <input type="text" data-key="subtitle_langs" placeholder="fr,en" spellcheck="false">
+        </label>
+      </section>
+
+      <!-- ============================================================ -->
+      <section id="performances" class="panel">
+        <h2>Performances</h2>
+        <div class="grid3">
+          <label class="field">
+            <span class="label">Téléchargements simultanés</span>
+            <input type="number" min="1" max="8" data-key="max_concurrent">
+          </label>
+          <label class="field">
+            <span class="label">Segments en parallèle (HLS/DASH)</span>
+            <input type="number" min="1" max="16" data-key="concurrent_fragments">
+          </label>
+          <label class="field">
+            <span class="label">Limite de débit (Kio/s, 0 = aucune)</span>
+            <input type="number" min="0" step="100" data-key="rate_limit_kib">
+          </label>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section id="avance" class="panel">
+        <h2>Avancé</h2>
+        <label class="check"><input type="checkbox" data-key="use_browser_cookies"> <span>Utiliser les cookies du navigateur pour le site concerné (vidéos accessibles après connexion). Les cookies sont transmis uniquement au moteur local, jamais enregistrés.</span></label>
+        <label class="check"><input type="checkbox" data-key="impersonate"> <span>Imiter la signature réseau d'un navigateur (contourne les blocages anti-robots ; nécessite curl_cffi)</span></label>
+      </section>
+
+      <!-- ============================================================ -->
+      <section id="interface" class="panel">
+        <h2>Interface</h2>
+        <label class="check"><input type="checkbox" data-key="overlay_button"> <span>Afficher un bouton « Télécharger » au survol des vidéos</span></label>
+        <label class="check"><input type="checkbox" data-key="notifications"> <span>Notifier la fin (ou l'échec) des téléchargements</span></label>
+        <div class="grid2">
+          <label class="field">
+            <span class="label">Ignorer les fichiers détectés de moins de (Kio)</span>
+            <input type="number" min="0" step="50" data-key="min_file_kib">
+            <span class="help">Évite d'afficher les aperçus et publicités courtes.</span>
+          </label>
+          <label class="field">
+            <span class="label">Taille de l'historique</span>
+            <input type="number" min="10" max="2000" step="10" data-key="history_limit">
+          </label>
+        </div>
+        <p class="hint">Raccourcis : <kbd>Alt</kbd>+<kbd>Maj</kbd>+<kbd>N</kbd> ouvre NineDeo, <kbd>Alt</kbd>+<kbd>Maj</kbd>+<kbd>D</kbd> télécharge la vidéo de la page. Modifiables dans <code>chrome://extensions/shortcuts</code>.</p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section id="installation" class="panel">
+        <h2>Installation du moteur</h2>
+        <ol class="steps">
+          <li>Ouvrez le dossier <code>NineDeo\installer\windows</code>.</li>
+          <li>Double-cliquez sur <code>install.bat</code> (aucun droit administrateur requis). Python 3.9+ doit être installé ; ffmpeg est téléchargé automatiquement s'il est absent.</li>
+          <li>Revenez ici et cliquez sur <strong>Tester la connexion</strong>.</li>
+        </ol>
+        <p class="hint">Identifiant de cette extension : <code id="extId"></code> — il est déjà déclaré dans l'installeur.</p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section id="apropos" class="panel">
+        <h2>À propos</h2>
+        <p>NineDeo <span id="extVersion"></span> — détection des médias dans le navigateur, téléchargement par <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noreferrer">yt-dlp</a> et <a href="https://ffmpeg.org" target="_blank" rel="noreferrer">ffmpeg</a>.</p>
+        <p class="hint">NineDeo ne contourne aucune mesure technique de protection (DRM : Widevine, PlayReady, FairPlay). Les contenus protégés sont signalés et ne sont pas téléchargés. Respectez les droits d'auteur et les conditions d'utilisation des sites.</p>
+        <button class="btn danger ghost" id="clearHistory" type="button">Effacer l'historique des téléchargements</button>
+        <button class="btn ghost" id="resetSettings" type="button">Rétablir les réglages par défaut</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="../shared/util.js"></script>
+  <script src="../shared/dom.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

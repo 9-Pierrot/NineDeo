@@ -1,0 +1,114 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "short_name": "NineDeo",
+  "description": "__MSG_extDescription__",
+  "version": "1.0.0",
+  "default_locale": "fr",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtNy01Ft5aCUO0F7LaaXtzcslkp0l+rl9DOaiPEyoeNWMJpUT2d4vPxm5e6ZAwsIYtHrnHObo0/R9lYU8nMZaIXs4M/C1wF3Hw+/w2SAjEBXQEqpwd5RaOJUgeLp28dwhqzDwLY/TyhYXSsVXc/65leL9Yu+mlNv5jCr2g70NJvMOCyp4yzex1XHulZu+Co+pkB+/rQEUNOrCzkadIYsU/nB80rfKkYw9uBNt3QI+ea2+TpLCj9Ogh//hQXwf3uRDNUMjvGa4qTApafJGS6awNo+J3FDf1JLMwibBoMx7dyHMy9/oI562YYrf10rtHhqUfTGSrNi/u47VtW0cBtf1rwIDAQAB",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "NineDeo",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "scripts": [
+      "shared/util.js",
+      "background.js"
+    ]
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "nativeMessaging",
+    "webRequest",
+    "webNavigation",
+    "storage",
+    "tabs",
+    "cookies",
+    "contextMenus",
+    "notifications",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/page-hook.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/drm-bridge.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "shared/util.js",
+        "content/detector.js",
+        "content/overlay.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+N"
+      },
+      "description": "Ouvrir NineDeo"
+    },
+    "quick-download": {
+      "suggested_key": {
+        "default": "Alt+Shift+D"
+      },
+      "description": "Télécharger la vidéo de la page (qualité par défaut)"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/icon-32.png",
+        "icons/icon-64.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "ninedeo@ninedeo.app",
+      "strict_min_version": "128.0"
+    }
+  }
+}

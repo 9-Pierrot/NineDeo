@@ -1,0 +1,4 @@
+{
+  "extName": { "message": "NineDeo — Video Downloader" },
+  "extDescription": { "message": "Detects and downloads videos from any website (MP4, HLS, DASH…) using a local yt-dlp + ffmpeg engine." }
+}

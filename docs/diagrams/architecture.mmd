@@ -1,0 +1,24 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#E8ECFF", "primaryBorderColor": "#0029FF", "primaryTextColor": "#0C1330", "lineColor": "#4B5575", "fontFamily": "Segoe UI, Arial"}}}%%
+flowchart LR
+  subgraph NAV["Navigateur (Chrome / Edge / Firefox)"]
+    direction TB
+    PAGE["Page web<br/>lecteur vidéo"]
+    HOOK["page-hook.js<br/>(monde MAIN)<br/>détection EME/DRM"]
+    CS["detector.js + overlay.js<br/>(monde isolé)<br/>DOM, iframes, bouton"]
+    SW["background.js<br/>(service worker)<br/>sniffer réseau, état,<br/>file de tâches"]
+    POP["Popup<br/>& Options"]
+    PAGE -. "requêtes HTTP" .-> SW
+    HOOK -- postMessage --> CS
+    CS -- runtime.sendMessage --> SW
+    POP <-- "Port + messages" --> SW
+  end
+  subgraph PC["Ordinateur (processus local)"]
+    direction TB
+    HOST["Hôte natif NineDeo<br/>ninedeo_host (Python)"]
+    YTDLP["yt-dlp<br/>1800+ extracteurs<br/>+ générique"]
+    FF["ffmpeg<br/>fusion, conversion"]
+    DISK[("Dossier<br/>Téléchargements\NineDeo")]
+    HOST --> YTDLP --> FF --> DISK
+  end
+  SW <== "Native Messaging<br/>JSON préfixé (stdin/stdout)" ==> HOST
+  YTDLP <-. "HTTPS (cookies, Referer)" .-> WEB(("Serveurs<br/>vidéo / CDN"))
