@@ -13,6 +13,7 @@ propres à l'autre famille pour éviter les avertissements.
 from __future__ import annotations
 
 import json
+import sys
 import zipfile
 from pathlib import Path
 
@@ -50,9 +51,11 @@ def build(target: str, manifest: dict) -> Path:
 
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     manifest = json.loads((SRC / "manifest.json").read_text("utf-8"))
     for target in ("chromium", "firefox"):
-        print("→", build(target, manifest).relative_to(ROOT))
+        print("->", build(target, manifest).relative_to(ROOT))
 
 
 if __name__ == "__main__":

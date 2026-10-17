@@ -6,6 +6,7 @@
 <p align="center">
   <a href="https://github.com/9-Pierrot/NineDeo/actions/workflows/ci.yml"><img src="https://github.com/9-Pierrot/NineDeo/actions/workflows/ci.yml/badge.svg" alt="Tests"></a>
   <a href="https://github.com/9-Pierrot/NineDeo/releases/latest"><img src="https://img.shields.io/github/v/release/9-Pierrot/NineDeo?label=t%C3%A9l%C3%A9charger&color=0029ff" alt="Dernière version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-38bfd6" alt="Licence MIT"></a>
 </p>
 
 NineDeo détecte les vidéos des pages que vous visitez (fichiers MP4/WebM, flux adaptatifs HLS et DASH, lecteurs intégrés en iframe) et les télécharge dans la qualité choisie. Une extension de navigateur se charge de la détection et de l'interface. Le téléchargement est confié à un petit programme local, l'**hôte natif**, qui pilote [yt-dlp](https://github.com/yt-dlp/yt-dlp) et [ffmpeg](https://ffmpeg.org).
@@ -85,3 +86,10 @@ python tests/e2e_extension.py --vendor <node_modules contenant hls.js>   # Chrom
 ## Cadre d'utilisation
 
 NineDeo est un projet pédagogique. Il ne contourne aucune mesure technique de protection : les flux chiffrés par DRM sont détectés puis refusés. Téléchargez uniquement des contenus que vous avez le droit de copier (contenus libres, vos propres vidéos, copie privée autorisée), dans le respect des conditions d'utilisation des sites.
+
+## Licence
+
+Le code de NineDeo est distribué sous licence [MIT](LICENSE) : réutilisation, modification et redistribution libres, à condition de conserver la mention de copyright.
+
+Composants tiers, absents de ce dépôt (l'exécutable Windows de la release embarque yt-dlp et curl_cffi ; ffmpeg est téléchargé à l'installation) : [yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [ffmpeg](https://ffmpeg.org/legal.html) (LGPL/GPL, build [yt-dlp/FFmpeg-Builds](https://github.com/yt-dlp/FFmpeg-Builds)), [curl_cffi](https://github.com/lexiforest/curl_cffi) (MIT).
+

@@ -22,6 +22,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 40
     env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: utf-8
       TAG: ${{ github.event.inputs.version && format('v{0}', github.event.inputs.version) || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
